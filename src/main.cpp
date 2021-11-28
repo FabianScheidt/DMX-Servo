@@ -1,18 +1,14 @@
 #include <Arduino.h>
 #include <DMXSerial.h>
 #include <Servo.h>
-#include <EEPROM.h>
 #include <ButtonHandler.h>
 #include <DisplayHandler.h>
+#include <AddressStorageHandler.h>
 
-
-void handleButtons();
 void printDmxAddress();
 void handleServo();
-int getDmxAddress();
-void setDmxAddress(int address);
-void increaseDmxAddress();
-void decreaseDmxAddress();
+void handleUpButton();
+void handleDownButton();
 
 
 // Configure Pins
@@ -25,36 +21,35 @@ int DOWN_BUTTON_PIN = 10;
 
 // Create references to servo and display
 Servo servo;
-ButtonHandler upButtonHandler(UP_BUTTON_PIN, &increaseDmxAddress);
-ButtonHandler downButtonHandler(DOWN_BUTTON_PIN, &decreaseDmxAddress);
+ButtonHandler upButtonHandler(UP_BUTTON_PIN, &handleUpButton);
+ButtonHandler downButtonHandler(DOWN_BUTTON_PIN, &handleDownButton);
 DisplayHandler displayHandler = DisplayHandler::init(DISPLAY_CLK_PIN, DISPLAY_DIO_PIN);
+AddressStorageHandler addressStorageHandler;
 
 void setup() {
     DMXSerial.init(DMXReceiver);
     servo.attach(SERVO_PIN);
     pinMode(LED_PIN, OUTPUT);
+    printDmxAddress();
 }
 
 void loop() {
-    handleButtons();
-    printDmxAddress();
+    upButtonHandler.loop();
+    downButtonHandler.loop();
+
     handleServo();
+
     delay(10);
 }
 
-void handleButtons() {
-    upButtonHandler.loop();
-    downButtonHandler.loop();
-}
-
 void printDmxAddress() {
-    int address = getDmxAddress();
+    int address = addressStorageHandler.getAddress();
     displayHandler.setAddress(address);
 }
 
 void handleServo() {
     // Read DMX value
-    int address = getDmxAddress();
+    int address = addressStorageHandler.getAddress();
     int value = DMXSerial.read(address);
     analogWrite(LED_PIN, value);
 
@@ -63,34 +58,12 @@ void handleServo() {
     servo.write(servoValue);
 }
 
-int getDmxAddress() {
-    int address = EEPROM.read(0) | (EEPROM.read(1) << 8);
-
-    if (address < 1 || address > 512) {
-        return 1;
-    }
-    return address;
+void handleUpButton() {
+    addressStorageHandler.increaseAddress();
+    printDmxAddress();
 }
 
-void setDmxAddress(int address) {
-    EEPROM.write(0, address & 0xff);
-    EEPROM.write(1, address >> 8);
-}
-
-void increaseDmxAddress() {
-    int address = getDmxAddress();
-    address++;
-    if (address > 512) {
-        address = 1;
-    }
-    setDmxAddress(address);
-}
-
-void decreaseDmxAddress() {
-    int address = getDmxAddress();
-    address--;
-    if (address < 1) {
-        address = 512;
-    }
-    setDmxAddress(address);
+void handleDownButton() {
+    addressStorageHandler.decreaseAddress();
+    printDmxAddress();
 }
