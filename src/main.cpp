@@ -1,8 +1,9 @@
+#include <Arduino.h>
 #include <DMXSerial.h>
 #include <Servo.h>
-#include <TM1637.h>
 #include <EEPROM.h>
 #include <ButtonHandler.h>
+#include <DisplayHandler.h>
 
 
 void handleButtons();
@@ -24,21 +25,14 @@ int DOWN_BUTTON_PIN = 10;
 
 // Create references to servo and display
 Servo servo;
-TM1637 tm(DISPLAY_CLK_PIN, DISPLAY_DIO_PIN);
 ButtonHandler upButtonHandler(UP_BUTTON_PIN, &increaseDmxAddress);
 ButtonHandler downButtonHandler(DOWN_BUTTON_PIN, &decreaseDmxAddress);
+DisplayHandler displayHandler = DisplayHandler::init(DISPLAY_CLK_PIN, DISPLAY_DIO_PIN);
 
 void setup() {
     DMXSerial.init(DMXReceiver);
-
     servo.attach(SERVO_PIN);
-
-    tm.init();
-    tm.set(2);
-
     pinMode(LED_PIN, OUTPUT);
-    pinMode(UP_BUTTON_PIN, INPUT);
-    pinMode(DOWN_BUTTON_PIN, INPUT);
 }
 
 void loop() {
@@ -55,10 +49,7 @@ void handleButtons() {
 
 void printDmxAddress() {
     int address = getDmxAddress();
-    tm.display(0, 13);
-    tm.display(1, (address / 100) % 10);
-    tm.display(2, (address / 10) % 10);
-    tm.display(3, address % 10);
+    displayHandler.setAddress(address);
 }
 
 void handleServo() {
