@@ -2,44 +2,7 @@
 #include <Servo.h>
 #include <TM1637.h>
 #include <EEPROM.h>
-
-
-class ButtonHandler {
-public:
-    ButtonHandler(int pin, void (*downCallback)());
-
-    void loop();
-
-private:
-    int _pin;
-
-    void (*_downCallback)();
-
-    bool _buttonPressed;
-    int _nextDownMillis;
-};
-
-ButtonHandler::ButtonHandler(int pin, void (*downCallback)()) {
-    pinMode(pin, INPUT);
-    _pin = pin;
-    _downCallback = downCallback;
-    _buttonPressed = false;
-}
-
-void ButtonHandler::loop() {
-    bool buttonState = !digitalRead(_pin);
-    int now = millis();
-    if (buttonState) {
-        if (!_buttonPressed) {
-            _nextDownMillis = now + 1000;
-            _downCallback();
-        } else if (now >= _nextDownMillis) {
-            _nextDownMillis = now + 70;
-            _downCallback();
-        }
-    }
-    _buttonPressed = buttonState;
-}
+#include <ButtonHandler.h>
 
 
 void handleButtons();
