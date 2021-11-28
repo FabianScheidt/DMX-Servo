@@ -11,11 +11,12 @@ ButtonHandler::ButtonHandler(int pin, void (*downCallback)()) {
     _pin = pin;
     _downCallback = downCallback;
     _buttonPressed = false;
+    _nextDownMillis = 0;
 }
 
 void ButtonHandler::loop() {
     bool buttonState = !digitalRead(_pin);
-    int now = millis();
+    unsigned long now = millis();
     if (buttonState) {
         if (!_buttonPressed) {
             _nextDownMillis = now + 1000;

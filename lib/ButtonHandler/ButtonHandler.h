@@ -14,7 +14,7 @@ private:
     void (*_downCallback)();
 
     bool _buttonPressed;
-    int _nextDownMillis;
+    unsigned long _nextDownMillis;
 };
 
 
