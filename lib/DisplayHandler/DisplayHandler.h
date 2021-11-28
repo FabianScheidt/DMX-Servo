@@ -6,13 +6,13 @@
 
 class DisplayHandler {
 public:
-    explicit DisplayHandler(TM1637 tm);
+    DisplayHandler(int clockPin, int dioPin);
+    ~DisplayHandler();
 
-    static DisplayHandler init(int clockPin, int dioPin);
     void setAddress(int address);
 
 private:
-    TM1637 _tm;
+    TM1637* _tm;
 };
 
 

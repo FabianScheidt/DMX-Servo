@@ -23,7 +23,7 @@ int DOWN_BUTTON_PIN = 10;
 Servo servo;
 ButtonHandler upButtonHandler(UP_BUTTON_PIN, &handleUpButton);
 ButtonHandler downButtonHandler(DOWN_BUTTON_PIN, &handleDownButton);
-DisplayHandler displayHandler = DisplayHandler::init(DISPLAY_CLK_PIN, DISPLAY_DIO_PIN);
+DisplayHandler displayHandler(DISPLAY_CLK_PIN, DISPLAY_DIO_PIN);
 AddressStorageHandler addressStorageHandler;
 
 void setup() {

@@ -6,21 +6,21 @@
 #include "DisplayHandler.h"
 
 
-DisplayHandler::DisplayHandler(TM1637 tm) : _tm(tm) {
-    _tm.init();
-    _tm.set(2);
-    _tm.point(false);
+DisplayHandler::DisplayHandler(int clockPin, int dioPin) {
+    _tm = new TM1637(clockPin, dioPin);
+    _tm->init();
+    _tm->set(2);
+    _tm->point(false);
 }
 
-DisplayHandler DisplayHandler::init(int clockPin, int dioPin) {
-    TM1637 tm = TM1637(clockPin, dioPin);
-    return DisplayHandler(tm);
+DisplayHandler::~DisplayHandler() {
+    delete _tm;
 }
 
 void DisplayHandler::setAddress(int address) {
-    _tm.display(0, 13);
-    _tm.display(1, (address / 100) % 10);
-    _tm.display(2, (address / 10) % 10);
-    _tm.display(3, address % 10);
-    _tm.point(false);
+    _tm->display(0, 13);
+    _tm->display(1, (address / 100) % 10);
+    _tm->display(2, (address / 10) % 10);
+    _tm->display(3, address % 10);
+    _tm->point(false);
 }
