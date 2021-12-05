@@ -6,7 +6,7 @@
 #include "Arduino.h"
 #include "ButtonHandler.h"
 
-ButtonHandler::ButtonHandler(int pin, void (*downCallback)()) {
+ButtonHandler::ButtonHandler(int pin, ButtonHandlerCallback* downCallback) {
     pinMode(pin, INPUT);
     _pin = pin;
     _downCallback = downCallback;
@@ -20,10 +20,10 @@ void ButtonHandler::loop() {
     if (buttonState) {
         if (!_buttonPressed) {
             _nextDownMillis = now + 1000;
-            _downCallback();
+            _downCallback->callback();
         } else if (now >= _nextDownMillis) {
             _nextDownMillis = now + 70;
-            _downCallback();
+            _downCallback->callback();
         }
     }
     _buttonPressed = buttonState;
