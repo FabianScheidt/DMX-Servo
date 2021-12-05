@@ -9,7 +9,8 @@ public:
     DisplayHandler(int clockPin, int dioPin);
     ~DisplayHandler();
 
-    void setAddress(int address);
+    void showNothing();
+    void showAddress(int address);
 
 private:
     TM1637* _tm;

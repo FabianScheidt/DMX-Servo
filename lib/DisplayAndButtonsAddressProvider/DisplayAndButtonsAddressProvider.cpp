@@ -17,6 +17,8 @@ DisplayAndButtonsAddressProvider::DisplayAndButtonsAddressProvider(
     downButtonCallback = new DownButtonCallback(this);
     downButtonHandler = new ButtonHandler(downButtonPin, downButtonCallback);
     addressStorageHandler = new AddressStorageHandler();
+    displayOn = true;
+    displayOffMillis = 0;
     printAddress();
 }
 
@@ -32,23 +34,38 @@ DisplayAndButtonsAddressProvider::~DisplayAndButtonsAddressProvider() {
 void DisplayAndButtonsAddressProvider::loop() {
     upButtonHandler->loop();
     downButtonHandler->loop();
+
+    if (displayOn && millis() > displayOffMillis) {
+        turnDisplayOff();
+    }
 }
 
 int DisplayAndButtonsAddressProvider::getAddress() {
     return addressStorageHandler->getAddress();
 }
 
+void DisplayAndButtonsAddressProvider::turnDisplayOff() {
+    displayOn = false;
+    displayHandler->showNothing();
+}
+
 void DisplayAndButtonsAddressProvider::printAddress() {
-    displayHandler->setAddress(getAddress());
+    displayOn = true;
+    displayOffMillis = millis() + 10000;
+    displayHandler->showAddress(getAddress());
 }
 
 void DisplayAndButtonsAddressProvider::handleUpButton() {
-    addressStorageHandler->increaseAddress();
+    if (displayOn) {
+        addressStorageHandler->increaseAddress();
+    }
     printAddress();
 }
 
 void DisplayAndButtonsAddressProvider::handleDownButton() {
-    addressStorageHandler->decreaseAddress();
+    if (displayOn) {
+        addressStorageHandler->decreaseAddress();
+    }
     printAddress();
 }
 

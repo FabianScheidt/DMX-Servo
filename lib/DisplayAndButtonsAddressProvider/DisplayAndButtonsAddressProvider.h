@@ -24,7 +24,10 @@ protected:
     ButtonHandler* downButtonHandler;
     ButtonHandlerCallback* downButtonCallback;
     AddressStorageHandler* addressStorageHandler;
+    bool displayOn;
+    unsigned long displayOffMillis;
 
+    void turnDisplayOff();
     void printAddress();
 };
 
