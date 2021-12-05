@@ -1,4 +1,4 @@
-#include "TM1637.h"
+#include <TM1637Display.h>
 
 #ifndef DMX_SERVO_DISPLAYHANDLER_H
 #define DMX_SERVO_DISPLAYHANDLER_H
@@ -13,7 +13,7 @@ public:
     void showAddress(int address);
 
 private:
-    TM1637* _tm;
+    TM1637Display* _tm;
 };
 
 

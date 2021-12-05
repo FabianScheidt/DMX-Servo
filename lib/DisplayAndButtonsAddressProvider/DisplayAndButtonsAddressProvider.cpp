@@ -1,7 +1,7 @@
 /**
  * DisplayAndButtonsAddressProvider.cpp
  */
-
+#include <Arduino.h>
 #include "DisplayAndButtonsAddressProvider.h"
 
 

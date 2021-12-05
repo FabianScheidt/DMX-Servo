@@ -2,15 +2,13 @@
  * DisplayHandler.cpp
  * Class to show a DMX address on a TM1637 display
  */
-#include "TM1637.h"
 #include "DisplayHandler.h"
 
 
 DisplayHandler::DisplayHandler(int clockPin, int dioPin) {
-    _tm = new TM1637(clockPin, dioPin);
-    _tm->set(BRIGHT_TYPICAL);
-    _tm->point(POINT_OFF);
-    _tm->clearDisplay();
+    _tm = new TM1637Display(clockPin, dioPin);
+    _tm->setBrightness(2);
+    showNothing();
 }
 
 DisplayHandler::~DisplayHandler() {
@@ -18,14 +16,15 @@ DisplayHandler::~DisplayHandler() {
 }
 
 void DisplayHandler::showNothing() {
-    _tm->point(POINT_OFF);
-    _tm->clearDisplay();
+    uint8_t blank[] = { 0x00, 0x00, 0x00, 0x00 };
+    _tm->setSegments(blank);
 }
 
 void DisplayHandler::showAddress(int address) {
-    _tm->point(POINT_OFF);
-    _tm->display(0, 13);
-    _tm->display(1, (int8_t) ((address / 100) % 10));
-    _tm->display(2, (int8_t) ((address / 10) % 10));
-    _tm->display(3, (int8_t) (address % 10));
+    uint8_t data[] = { 0xff, 0xff, 0xff, 0xff };
+    data[0] = _tm->encodeDigit(13);
+    data[1] = _tm->encodeDigit((address / 100) % 10);
+    data[2] = _tm->encodeDigit((address / 10) % 10);
+    data[3] = _tm->encodeDigit(address % 10);
+    _tm->setSegments(data);
 }
