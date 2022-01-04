@@ -37,6 +37,6 @@ void handleServo() {
     analogWrite(LED_PIN, value);
 
     // Scale DMX value and write it to servo
-    int servoValue = map(value, 0, 255, 0, 180);
-    servo.write(servoValue);
+    int servoMicrosecondsValue = map(value, 0, 255, 2400, 544);
+    servo.writeMicroseconds(servoMicrosecondsValue);
 }
